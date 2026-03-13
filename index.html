@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Around the Corner</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg:       #0f0e0c;
+    --surface:  #1a1814;
+    --card:     #221f1a;
+    --border:   #2e2a23;
+    --accent:   #e8a84c;
+    --accent2:  #c97b3a;
+    --text:     #f0ebe2;
+    --muted:    #7a7060;
+    --green:    #5a9e6f;
+    --red:      #c05a4a;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 20px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: var(--accent);
+    letter-spacing: -0.5px;
+  }
+  .logo span { color: var(--text); font-weight: 700; }
+  .tagline { font-size: 0.75rem; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin-top: 2px; }
+
+  /* ── STATS BAR ── */
+  .stats-bar {
+    display: flex;
+    gap: 0;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 40px;
+    overflow-x: auto;
+  }
+  .stat-item {
+    padding: 14px 28px 14px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-right: 1px solid var(--border);
+    margin-right: 28px;
+    white-space: nowrap;
+  }
+  .stat-item:last-child { border-right: none; }
+  .stat-icon { font-size: 1.2rem; }
+  .stat-val { font-size: 1.1rem; font-weight: 500; color: var(--accent); }
+  .stat-lbl { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+
+  /* ── MAIN LAYOUT ── */
+  .layout { display: grid; grid-template-columns: 280px 1fr; min-height: calc(100vh - 120px); }
+
+  /* ── SIDEBAR ── */
+  aside {
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 28px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+  .filter-label {
+    font-size: 0.65rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .search-wrap { position: relative; }
+  .search-wrap input {
+    width: 100%;
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 10px 14px 10px 36px;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .search-wrap input:focus { border-color: var(--accent); }
+  .search-wrap::before { content: '🔍'; position: absolute; left: 11px; top: 50%; transform: translateY(-50%); font-size: 0.85rem; }
+
+  .cat-pills { display: flex; flex-direction: column; gap: 6px; }
+  .cat-pill {
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 9px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.88rem;
+    text-align: left;
+    transition: all 0.18s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .cat-pill:hover { border-color: var(--accent); color: var(--text); }
+  .cat-pill.active { background: var(--accent); color: #0f0e0c; border-color: var(--accent); font-weight: 500; }
+
+  .range-group { display: flex; flex-direction: column; gap: 14px; }
+  .range-item label { display: flex; justify-content: space-between; font-size: 0.82rem; color: var(--muted); margin-bottom: 6px; }
+  .range-item label span { color: var(--accent); font-weight: 500; }
+  input[type=range] {
+    width: 100%;
+    accent-color: var(--accent);
+    cursor: pointer;
+    height: 4px;
+  }
+
+  .apply-btn {
+    background: var(--accent);
+    color: #0f0e0c;
+    border: none;
+    padding: 11px;
+    border-radius: 8px;
+    font-family: inherit;
+    font-weight: 500;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .apply-btn:hover { background: var(--accent2); }
+
+  /* ── MAIN CONTENT ── */
+  main { padding: 28px 36px; }
+
+  .results-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 22px;
+  }
+  .results-count { font-size: 0.8rem; color: var(--muted); }
+  .results-count strong { color: var(--accent); font-size: 1rem; }
+
+  .sort-select {
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 7px 12px;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 0.82rem;
+    outline: none;
+    cursor: pointer;
+  }
+
+  /* ── CARDS GRID ── */
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 18px; }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    cursor: pointer;
+    transition: transform 0.18s, border-color 0.18s, box-shadow 0.18s;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.2s;
+  }
+  .card:hover { transform: translateY(-3px); border-color: var(--accent); box-shadow: 0 8px 32px rgba(232,168,76,0.08); }
+  .card:hover::before { transform: scaleX(1); }
+
+  .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+  .card-cat { font-size: 0.7rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); display: flex; align-items: center; gap: 5px; }
+  .card-badge {
+    padding: 3px 9px;
+    border-radius: 20px;
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+  }
+  .badge-open { background: rgba(90,158,111,0.15); color: var(--green); border: 1px solid rgba(90,158,111,0.3); }
+  .badge-closed { background: rgba(192,90,74,0.15); color: var(--red); border: 1px solid rgba(192,90,74,0.3); }
+
+  .card-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.18rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+    line-height: 1.3;
+  }
+  .card-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.5; margin-bottom: 14px; }
+
+  .card-meta { display: flex; gap: 14px; flex-wrap: wrap; }
+  .meta-chip {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+  .meta-chip .val { color: var(--text); font-weight: 400; }
+  .stars { color: var(--accent); font-size: 0.8rem; }
+
+  /* ── MODAL ── */
+  .overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.75);
+    z-index: 200;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.22s;
+    backdrop-filter: blur(4px);
+  }
+  .overlay.show { opacity: 1; pointer-events: all; }
+
+  .modal {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 85vh;
+    overflow-y: auto;
+    transform: translateY(20px);
+    transition: transform 0.22s;
+    padding: 32px;
+  }
+  .overlay.show .modal { transform: translateY(0); }
+
+  .modal-close {
+    float: right;
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 1.4rem;
+    cursor: pointer;
+    line-height: 1;
+    transition: color 0.15s;
+  }
+  .modal-close:hover { color: var(--text); }
+
+  .modal-cat { font-size: 0.72rem; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+  .modal-name { font-family: 'Playfair Display', serif; font-size: 1.9rem; font-weight: 900; margin-bottom: 6px; }
+  .modal-addr { font-size: 0.85rem; color: var(--muted); margin-bottom: 18px; }
+  .modal-desc { font-size: 0.9rem; line-height: 1.65; color: var(--text); margin-bottom: 22px; padding-bottom: 22px; border-bottom: 1px solid var(--border); }
+
+  .modal-stats { display: flex; gap: 24px; margin-bottom: 22px; flex-wrap: wrap; }
+  .modal-stat { text-align: center; }
+  .modal-stat .ms-val { font-size: 1.5rem; font-weight: 500; color: var(--accent); }
+  .modal-stat .ms-lbl { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+
+  .section-title {
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+
+  .reviews-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 22px; }
+  .review-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px;
+  }
+  .review-top { display: flex; justify-content: space-between; margin-bottom: 6px; }
+  .review-name { font-size: 0.85rem; font-weight: 500; }
+  .review-rating { color: var(--accent); font-size: 0.8rem; }
+  .review-text { font-size: 0.82rem; color: var(--muted); line-height: 1.5; }
+
+  /* Add Review Form */
+  .add-review { padding-top: 18px; border-top: 1px solid var(--border); }
+  .form-row { margin-bottom: 12px; }
+  .form-row label { display: block; font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+  .form-row input, .form-row textarea, .form-row select {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 9px 12px;
+    border-radius: 7px;
+    font-family: inherit;
+    font-size: 0.88rem;
+    outline: none;
+    transition: border-color 0.2s;
+    resize: vertical;
+  }
+  .form-row input:focus, .form-row textarea:focus, .form-row select:focus { border-color: var(--accent); }
+  .submit-btn {
+    background: var(--accent);
+    color: #0f0e0c;
+    border: none;
+    padding: 10px 22px;
+    border-radius: 7px;
+    font-family: inherit;
+    font-weight: 500;
+    cursor: pointer;
+    font-size: 0.88rem;
+    transition: background 0.2s;
+  }
+  .submit-btn:hover { background: var(--accent2); }
+
+  /* ── EMPTY STATE ── */
+  .empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--muted);
+    grid-column: 1 / -1;
+  }
+  .empty-icon { font-size: 3rem; margin-bottom: 14px; }
+  .empty h3 { font-size: 1.1rem; color: var(--text); margin-bottom: 6px; }
+
+  /* ── LOADING ── */
+  .spinner {
+    width: 36px; height: 36px;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    margin: 60px auto;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed;
+    bottom: 28px; right: 28px;
+    background: var(--green);
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all 0.3s;
+    z-index: 999;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  @media (max-width: 768px) {
+    .layout { grid-template-columns: 1fr; }
+    aside { display: none; }
+    header { padding: 16px 20px; }
+    main { padding: 20px; }
+    .stats-bar { padding: 0 20px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="logo">Around the <span>Corner</span></div>
+    <div class="tagline">Discover places near your college</div>
+  </div>
+</header>
+
+<div class="stats-bar" id="statsBar">
+  <div class="stat-item"><span class="stat-icon">📍</span><div><div class="stat-val" id="totalPlaces">—</div><div class="stat-lbl">Places</div></div></div>
+  <div class="stat-item"><span class="stat-icon">🍽️</span><div><div class="stat-val" id="foodCount">—</div><div class="stat-lbl">Food Spots</div></div></div>
+  <div class="stat-item"><span class="stat-icon">☕</span><div><div class="stat-val" id="hangoutCount">—</div><div class="stat-lbl">Hangouts</div></div></div>
+  <div class="stat-item"><span class="stat-icon">💰</span><div><div class="stat-val" id="avgCost">—</div><div class="stat-lbl">Avg Cost / Person</div></div></div>
+</div>
+
+<div class="layout">
+  <aside>
+    <div>
+      <div class="filter-label">Search</div>
+      <div class="search-wrap">
+        <input type="text" id="searchInput" placeholder="Find a place..." />
+      </div>
+    </div>
+
+    <div>
+      <div class="filter-label">Category</div>
+      <div class="cat-pills">
+        <button class="cat-pill active" data-cat="">🗺️ All Places</button>
+        <button class="cat-pill" data-cat="Food">🍽️ Food</button>
+        <button class="cat-pill" data-cat="Hangout">☕ Hangout</button>
+        <button class="cat-pill" data-cat="Tourist">🏛️ Tourist</button>
+        <button class="cat-pill" data-cat="Essentials">🏪 Essentials</button>
+      </div>
+    </div>
+
+    <div>
+      <div class="filter-label">Filters</div>
+      <div class="range-group">
+        <div class="range-item">
+          <label>Max Distance <span id="distVal">100 km</span></label>
+          <input type="range" id="distRange" min="0.1" max="100" step="0.1" value="20" />
+        </div>
+        <div class="range-item">
+          <label>Max Cost <span id="costVal">₹1500</span></label>
+          <input type="range" id="costRange" min="0" max="1500" step="10" value="800" />
+        </div>
+        <div class="range-item">
+          <label>Min Rating <span id="ratingVal">0 ★</span></label>
+          <input type="range" id="ratingRange" min="0" max="5" step="0.5" value="0" />
+        </div>
+      </div>
+    </div>
+
+    <button class="apply-btn" onclick="applyFilters()">Apply Filters</button>
+  </aside>
+
+  <main>
+    <div class="results-header">
+      <div class="results-count">Showing <strong id="countDisplay">0</strong> places</div>
+      <select class="sort-select" id="sortSelect" onchange="sortCards()">
+        <option value="rating">Top Rated</option>
+        <option value="distance">Nearest First</option>
+        <option value="cost">Cheapest First</option>
+        <option value="name">A → Z</option>
+      </select>
+    </div>
+    <div class="cards" id="cardsGrid">
+      <div class="spinner"></div>
+    </div>
+  </main>
+</div>
+
+<!-- Modal -->
+<div class="overlay" id="overlay" onclick="closeModal(event)">
+  <div class="modal" id="modal">
+    <button class="modal-close" onclick="closeModalDirect()">✕</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+  const API = 'http://127.0.0.1:8000';
+  let allPlaces = [];
+  let currentPlaces = [];
+
+  // ── Range labels
+  document.getElementById('distRange').oninput  = e => document.getElementById('distVal').textContent   = e.target.value + ' km';
+  document.getElementById('costRange').oninput  = e => document.getElementById('costVal').textContent   = '₹' + e.target.value;
+  document.getElementById('ratingRange').oninput = e => document.getElementById('ratingVal').textContent = e.target.value + ' ★';
+
+  // ── Search on enter
+  document.getElementById('searchInput').addEventListener('keyup', e => { if(e.key === 'Enter') applyFilters(); });
+
+  // ── Category pills
+  document.querySelectorAll('.cat-pill').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.cat-pill').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      applyFilters();
+    });
+  });
+
+  // ── Fetch & render all places
+  async function loadPlaces() {
+    try {
+      const res = await fetch(`${API}/places`);
+      allPlaces = await res.json();
+      currentPlaces = [...allPlaces];
+      renderCards(currentPlaces);
+    } catch {
+      document.getElementById('cardsGrid').innerHTML = `
+        <div class="empty">
+          <div class="empty-icon">⚠️</div>
+          <h3>Can't connect to server</h3>
+          <p>Make sure the FastAPI backend is running on port 8000.</p>
+        </div>`;
+    }
+  }
+
+  async function loadStats() {
+    try {
+      const res = await fetch(`${API}/stats`);
+      const s   = await res.json();
+      document.getElementById('totalPlaces').textContent = s.total_places;
+      document.getElementById('avgCost').textContent     = '₹' + s.avg_cost;
+      const food    = s.by_category.find(c => c.name === 'Food');
+      const hangout = s.by_category.find(c => c.name === 'Hangout');
+      document.getElementById('foodCount').textContent    = food    ? food.count    : '—';
+      document.getElementById('hangoutCount').textContent = hangout ? hangout.count : '—';
+    } catch {}
+  }
+
+  function applyFilters() {
+    const cat       = document.querySelector('.cat-pill.active').dataset.cat;
+    const maxDist   = parseFloat(document.getElementById('distRange').value);
+    const maxCost   = parseInt(document.getElementById('costRange').value);
+    const minRating = parseFloat(document.getElementById('ratingRange').value);
+    const search    = document.getElementById('searchInput').value.toLowerCase().trim();
+
+    currentPlaces = allPlaces.filter(p => {
+      if (cat && p.category !== cat) return false;
+      if (p.distance_km > maxDist) return false;
+      if (maxCost < 500 && p.avg_cost > 0 && p.avg_cost > maxCost) return false;
+      if (p.rating < minRating) return false;
+      if (search && !p.name.toLowerCase().includes(search) && !(p.description||'').toLowerCase().includes(search)) return false;
+      return true;
+    });
+
+    sortCards();
+  }
+
+  function sortCards() {
+    const sort = document.getElementById('sortSelect').value;
+    currentPlaces.sort((a, b) => {
+      if (sort === 'rating')   return (b.rating||0) - (a.rating||0);
+      if (sort === 'distance') return a.distance_km - b.distance_km;
+      if (sort === 'cost')     return (a.avg_cost||0) - (b.avg_cost||0);
+      if (sort === 'name')     return a.name.localeCompare(b.name);
+      return 0;
+    });
+    renderCards(currentPlaces);
+  }
+
+  function renderCards(places) {
+    document.getElementById('countDisplay').textContent = places.length;
+    if (!places.length) {
+      document.getElementById('cardsGrid').innerHTML = `
+        <div class="empty">
+          <div class="empty-icon">🔭</div>
+          <h3>No places found</h3>
+          <p>Try changing your filters or search term.</p>
+        </div>`;
+      return;
+    }
+    document.getElementById('cardsGrid').innerHTML = places.map(p => `
+      <div class="card" onclick="openModal(${p.id})">
+        <div class="card-top">
+          <div class="card-cat">${p.icon} ${p.category}</div>
+          <span class="card-badge ${p.is_open ? 'badge-open' : 'badge-closed'}">${p.is_open ? 'Open' : 'Closed'}</span>
+        </div>
+        <div class="card-name">${p.name}</div>
+        <div class="card-desc">${p.description || ''}</div>
+        <div class="card-meta">
+          <div class="meta-chip">📍 <span class="val">${p.distance_km} km</span></div>
+          ${p.avg_cost > 0 ? `<div class="meta-chip">💰 <span class="val">₹${p.avg_cost}</span></div>` : ''}
+          ${p.rating ? `<div class="meta-chip"><span class="stars">★</span> <span class="val">${p.rating}</span></div>` : ''}
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // ── Modal
+  async function openModal(id) {
+    document.getElementById('overlay').classList.add('show');
+    document.getElementById('modalContent').innerHTML = '<div class="spinner"></div>';
+
+    const [place, reviews] = await Promise.all([
+      fetch(`${API}/places/${id}`).then(r => r.json()),
+      fetch(`${API}/places/${id}/reviews`).then(r => r.json()),
+    ]);
+
+    const stars = n => '★'.repeat(Math.round(n)) + '☆'.repeat(5 - Math.round(n));
+    const reviewsHtml = reviews.length
+      ? reviews.map(r => `
+          <div class="review-card">
+            <div class="review-top">
+              <span class="review-name">${r.reviewer_name}</span>
+              <span class="review-rating">${stars(r.rating)} ${r.rating}</span>
+            </div>
+            <div class="review-text">${r.review_text || ''}</div>
+          </div>`).join('')
+      : '<p style="color:var(--muted);font-size:0.85rem">No reviews yet. Be the first!</p>';
+
+    document.getElementById('modalContent').innerHTML = `
+      <div class="modal-cat">${place.icon} ${place.category}</div>
+      <div class="modal-name">${place.name}</div>
+      <div class="modal-addr">📍 ${place.address}</div>
+      <div class="modal-desc">${place.description || ''}</div>
+
+      <div class="modal-stats">
+        <div class="modal-stat"><div class="ms-val">${place.distance_km} km</div><div class="ms-lbl">Distance</div></div>
+        ${place.avg_cost > 0 ? `<div class="modal-stat"><div class="ms-val">₹${place.avg_cost}</div><div class="ms-lbl">Avg Cost</div></div>` : ''}
+        ${place.rating ? `<div class="modal-stat"><div class="ms-val">${place.rating} ★</div><div class="ms-lbl">Rating</div></div>` : ''}
+        <div class="modal-stat"><div class="ms-val" style="color:${place.is_open?'var(--green)':'var(--red)'}">${place.is_open?'Open':'Closed'}</div><div class="ms-lbl">Status</div></div>
+      </div>
+
+      <div class="section-title">Reviews</div>
+      <div class="reviews-list">${reviewsHtml}</div>
+
+      <div class="add-review">
+        <div class="section-title">Add a Review</div>
+        <div class="form-row">
+          <label>Rating</label>
+          <select id="revRating">
+            <option value="5">★★★★★ — Excellent</option>
+            <option value="4">★★★★☆ — Good</option>
+            <option value="3">★★★☆☆ — Average</option>
+            <option value="2">★★☆☆☆ — Poor</option>
+            <option value="1">★☆☆☆☆ — Terrible</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label>Your Review</label>
+          <textarea id="revText" rows="3" placeholder="What did you think?"></textarea>
+        </div>
+        <button class="submit-btn" onclick="submitReview(${id})">Submit Review</button>
+      </div>
+    `;
+  }
+
+  async function submitReview(placeId) {
+    const rating = parseFloat(document.getElementById('revRating').value);
+    const text   = document.getElementById('revText').value.trim();
+
+    await fetch(`${API}/places/${placeId}/reviews`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ review_text: text, rating }),
+    });
+
+    showToast('Review submitted! ✓');
+    // Reload modal and global data
+    openModal(placeId);
+    loadPlaces();
+    loadStats();
+  }
+
+  function closeModal(e) { if (e.target === document.getElementById('overlay')) closeModalDirect(); }
+  function closeModalDirect() { document.getElementById('overlay').classList.remove('show'); }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  // ── Init
+  loadStats();
+  loadPlaces();
+</script>
+</body>
+</html>
