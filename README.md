@@ -1,6 +1,8 @@
 # Around the Corner 🗺️
 A DBMS project to discover food, hangout, tourist, and essential spots near college.
 
+https://avnikashyap08.github.io/around-the-corner/
+
 ## Project Structure
 ```
 around-the-corner/
