@@ -14,3 +14,5 @@ around-the-corner/
 - **categories** — Food, Hangout, Tourist, Essentials
 - **places** — name, category, address, distance, avg_cost, rating, description
 - **reviews** — linked to places, text, rating
+
+python -m uvicorn main:app --reload
