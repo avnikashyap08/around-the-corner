@@ -54,13 +54,16 @@ INSERT INTO places (name, category_id, address, distance_km, avg_cost, rating, d
 ('Lingaraj Temple', 3, 'Old Town', 6.2, 0, 4.8, 'This is the best museum in Odisha. They have many educational and historical resources. Ticket price is also very low.');
 
 INSERT INTO reviews (place_id, review_text, rating) VALUES
-(1,   'Best value thali I have had. Fill up for under ₹100!', 4.5),
-(1,   'Dal is amazing. A bit crowded at lunch though.',        4.0),
-(2,   'The biryani is absolutely worth every rupee.',          5.0),
-(5,     'You have to try the pani puri. Life-changing.',         5.0),
-(6,   'Wi-Fi is solid and staff is friendly. My go-to cafe.',  4.5),
-(10,   'Beautiful fort, great for photography. Go at sunrise.', 5.0),
-(13,  'Open at 3 AM too. Saved me during exam week.',          4.5);
+(1,  'The chicken salad is unreal, so worth the trip to Saheed Nagar!', 5.0),
+(2,  'Affogato here is absolutely divine. Very chill vibe.', 4.5),
+(3,  'Finally found authentic pizza in Bhubaneswar. Terra Rosso never disappoints.', 4.0),
+(4,  'Best korean food I have had outside of a big metro city!', 4.5),
+(5,  'Butter masala is heavenly. My go-to place for north Indian.', 5.0),
+(11, 'So peaceful and green. Perfect for a morning walk.', 4.5),
+(13, 'Caught the most beautiful sunset from Sikharchandi. Highly recommend!', 5.0),
+(16, 'Very serene and spiritual. A must visit in Bhubaneswar.', 4.5),
+(17, 'The history here is incredible. Felt very humbling to visit.', 5.0),
+(20, 'Lingaraj is breathtaking. Go early morning to avoid crowds.', 5.0);
 
 
 SELECT * FROM places;
